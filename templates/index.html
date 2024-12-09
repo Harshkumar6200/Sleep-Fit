@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Health Prediction</title>
+    <style>
+        /* General reset for margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0000f7;
+    padding: 20px;
+}
+
+/* Heading styling */
+h1 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+/* Form styling */
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Label styling */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+    color: #000000;
+}
+
+/* Input and select field styling */
+input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+/* Focus state for input and select fields */
+input[type="number"]:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button styling */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+/* Button hover state */
+button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Styling for the prediction result */
+/* Styling for the prediction result */
+#predictionResult {
+    font-size: 20px; /* Font size */
+    font-family: 'Arial', sans-serif; /* Font family */
+    color: white; /* Text color */
+    text-align: center; /* Center-align text */
+    margin-top: 20px; /* Space above the result */
+    margin-bottom: 20px; /* Space below the result */
+    width: 100%; /* Ensure the div spans the entire width */
+}
+
+
+/* Responsive styling for smaller screens */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
+    </style>
+</head>
+<body>
+    <h1>Predict Your Sleep Health</h1>
+    <form id="healthForm" action="/predict" method="POST">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <label for="occupation">Occupation:</label>
+        <select id="occupation" name="occupation" required>
+            <option value="Others">Others</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Engineer">Engineer</option>
+            <option value="Accountant">Accountant</option>
+            <option value="Lawyer">Lawyer</option>
+            <option value="Salesperson">Salesperson</option>
+        </select><br><br>
+
+        <label for="sleep_duration">Sleep Duration (1-12 hrs):</label>
+        <input type="number" step="0.1" id="sleep_duration" name="sleep_duration" required><br><br>
+
+        <label for="quality_sleep">Quality of Sleep (1-10):</label>
+        <input type="number" id="quality_sleep" name="quality_sleep" required><br><br>
+
+        <label for="physical_activity">Physical Activity Level (10-100):</label>
+        <input type="number" id="physical_activity" name="physical_activity" required><br><br>
+
+        <label for="stress_level">Stress Level (1-10):</label>
+        <input type="number" id="stress_level" name="stress_level" required><br><br>
+
+        <label for="bmi_category">BMI Category:</label>
+        <select id="bmi_category" name="bmi_category" required>
+            <option value="Normal Weight">Normal Weight</option>
+            <option value="Overweight">Overweight</option>
+            <option value="Obese">Obese</option>
+        </select><br><br>
+
+        <label for="heart_rate">Heart Rate:</label>
+        <input type="number" id="heart_rate" name="heart_rate" required><br><br>
+
+        <label for="daily_steps">Daily Steps:</label>
+        <input type="number" id="daily_steps" name="daily_steps" required><br><br>
+
+        <label for="systolic">Systolic (mmHg):</label>
+        <input type="number" id="systolic" name="systolic" required><br><br>
+
+        <label for="diastolic">Diastolic (mmHg):</label>
+        <input type="number" id="diastolic" name="diastolic" required><br><br>
+
+        <button type="submit">Predict Sleep Health</button>
+    </form>
+
+    <div id="predictionResult" style="margin-top: 20px;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#healthForm").on("submit", function (event) {
+                event.preventDefault(); // Prevent form from submitting the default way
+
+                // Collect the form data
+                var formData = $(this).serialize();
+
+                // Send an AJAX POST request
+                $.ajax({
+                    type: "POST",
+                    url: "/predict",
+                    data: formData,
+                    success: function (response) {
+                        if (response['error']) {
+                            $("#predictionResult").html("<p style='color: red;'>" + response['error'] + "</p>");
+                        } else {
+                            $("#predictionResult").html("<p><strong>Prediction Result:</strong> " + response['Sleep Health'] + "</p>");
+                        }
+                    },
+                    error: function (error) {
+                        $("#predictionResult").html("<p style='color: red;'>An error occurred: " + error.responseText + "</p>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
