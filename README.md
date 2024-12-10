@@ -51,7 +51,3 @@ Access the live app here: [Sleep-Fit](https://sleep-fit-1.onrender.com/)
 ## Contributing 🤝
 Contributions are welcome! Fork the repository, create a feature branch, and submit a pull request.
 
----
-
-Let me know if this meets your expectations or if any further adjustments are needed!
-URL: https://sleep-fit-1.onrender.com/
